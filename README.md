@@ -51,7 +51,7 @@ Run all terratest tests using the `terratest` script.  If using `aws-vault`, you
 
 ## Terraform Version
 
-Terraform 0.13. Pin module version to ~> 1.0.0 . Submit pull-requests to master branch.
+Terraform 0.13. Pin module version to ~> 1.0.0 . Submit pull-requests to main branch.
 
 Terraform 0.11 and 0.12 are not supported.
 
@@ -91,6 +91,7 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_grants"></a> [grants](#input\_grants) | List of ACL policy grants. | <pre>list(object({<br>    id          = string<br>    permissions = list(string)<br>    type        = string<br>  }))</pre> | `[]` | no |
 | <a name="input_kms_master_key_id"></a> [kms\_master\_key\_id](#input\_kms\_master\_key\_id) | The default KMS used for server-side encryption. | `string` | `""` | no |
 | <a name="input_logging_bucket"></a> [logging\_bucket](#input\_logging\_bucket) | The name of the bucket that will receive the log objects. | `string` | `""` | no |
 | <a name="input_logging_prefix"></a> [logging\_prefix](#input\_logging\_prefix) | The key prefix to use when logging.  Defaults to "s3/[NAME]/" if not specified. | `string` | `""` | no |
@@ -103,5 +104,6 @@ No modules.
 | Name | Description |
 |------|-------------|
 | <a name="output_arn"></a> [arn](#output\_arn) | The Amazon Resource Name (ARN) of the AWS S3 Bucket. |
+| <a name="output_bucket_regional_domain_name"></a> [bucket\_regional\_domain\_name](#output\_bucket\_regional\_domain\_name) | The regional domain name of the AWS S3 Bucket. |
 | <a name="output_id"></a> [id](#output\_id) | The ID of the AWS S3 Bucket. |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
