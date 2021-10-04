@@ -51,7 +51,7 @@
  *
  * ## Terraform Version
  *
- * Terraform 0.13. Pin module version to ~> 1.0.0 . Submit pull-requests to master branch.
+ * Terraform 0.13. Pin module version to ~> 1.0.0 . Submit pull-requests to main branch.
  *
  * Terraform 0.11 and 0.12 are not supported.
  *
@@ -71,6 +71,15 @@ resource "aws_s3_bucket" "main" {
   bucket = var.name
 
   tags = var.tags
+
+  dynamic "grant" {
+    for_each = var.grants
+    content {
+      id          = grant.value.id
+      permissions = grant.value.permissions
+      type        = grant.value.type
+    }
+  }
 
   dynamic "logging" {
     for_each = length(var.logging_bucket) > 0 ? [1] : []

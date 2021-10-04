@@ -1,3 +1,13 @@
+variable "grants" {
+  type = list(object({
+    id          = string
+    permissions = list(string)
+    type        = string
+  }))
+  default     = []
+  description = "List of ACL policy grants."
+}
+
 variable "name" {
   type        = string
   description = "The name of the AWS S3 bucket."
