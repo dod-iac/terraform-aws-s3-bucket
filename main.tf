@@ -115,6 +115,60 @@ resource "aws_s3_bucket_public_access_block" "main" {
   restrict_public_buckets = true
 }
 
+data "aws_iam_policy_document" "policy" {
+  dynamic "statement" {
+    for_each = var.require_acl_bucket_owner_full_control ? [1] : []
+    content {
+      actions = [
+        "s3:PutObject",
+      ]
+      effect = "Deny"
+      principals {
+        type        = "AWS"
+        identifiers = ["*"]
+      }
+      resources = [
+        format("%s/*", aws_s3_bucket.main.arn)
+      ]
+      condition {
+        test     = "StringNotEquals"
+        variable = "s3:x-amz-acl"
+        values   = ["bucket-owner-full-control"]
+      }
+    }
+  }
+  dynamic "statement" {
+    for_each = var.require_tls ? [1] : []
+    content {
+      sid    = "RequireTLS"
+      effect = "Deny"
+      principals {
+        type        = "AWS"
+        identifiers = ["*"]
+      }
+      actions = ["s3:*"]
+      resources = [
+        aws_s3_bucket.main.arn,
+        format("%s/*", aws_s3_bucket.main.arn)
+      ]
+      condition {
+        test     = "Bool"
+        variable = "aws:SecureTransport"
+        values   = ["false"]
+      }
+    }
+  }
+}
+
+resource "aws_s3_bucket_policy" "main" {
+  depends_on = [
+    aws_s3_bucket_public_access_block.main
+  ]
+  count  = (var.require_tls || var.require_acl_bucket_owner_full_control) ? 1 : 0
+  bucket = aws_s3_bucket.main.id
+  policy = data.aws_iam_policy_document.policy.json
+}
+
 resource "aws_s3_bucket_notification" "main" {
   # Wait until after public access block is configured.
   depends_on = [

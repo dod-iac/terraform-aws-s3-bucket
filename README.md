@@ -82,8 +82,10 @@ No modules.
 |------|------|
 | [aws_s3_bucket.main](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket) | resource |
 | [aws_s3_bucket_notification.main](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_notification) | resource |
+| [aws_s3_bucket_policy.main](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_policy) | resource |
 | [aws_s3_bucket_public_access_block.main](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_public_access_block) | resource |
 | [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
+| [aws_iam_policy_document.policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_partition.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/partition) | data source |
 | [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 
@@ -97,6 +99,8 @@ No modules.
 | <a name="input_logging_prefix"></a> [logging\_prefix](#input\_logging\_prefix) | The key prefix to use when logging.  Defaults to "s3/[NAME]/" if not specified. | `string` | `""` | no |
 | <a name="input_name"></a> [name](#input\_name) | The name of the AWS S3 bucket. | `string` | n/a | yes |
 | <a name="input_notifications"></a> [notifications](#input\_notifications) | List of notifications to configure. | <pre>list(object({<br>    id            = string<br>    queue_arn     = string<br>    events        = list(string)<br>    filter_prefix = string<br>    filter_suffix = string<br>  }))</pre> | `[]` | no |
+| <a name="input_require_acl_bucket_owner_full_control"></a> [require\_acl\_bucket\_owner\_full\_control](#input\_require\_acl\_bucket\_owner\_full\_control) | Require all objects to have the "bucket-owner-full-control" acl. | `bool` | `false` | no |
+| <a name="input_require_tls"></a> [require\_tls](#input\_require\_tls) | Require all API requests to use TLS connections. | `bool` | `false` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags applied to the AWS S3 bucket. | `map(string)` | `{}` | no |
 
 ## Outputs

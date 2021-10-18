@@ -43,6 +43,18 @@ variable "notifications" {
   default     = []
 }
 
+variable "require_tls" {
+  type        = bool
+  description = "Require all API requests to use TLS connections."
+  default     = false
+}
+
+variable "require_acl_bucket_owner_full_control" {
+  type        = bool
+  description = "Require all objects to have the \"bucket-owner-full-control\" acl."
+  default     = false
+}
+
 variable "tags" {
   type        = map(string)
   description = "Tags applied to the AWS S3 bucket."
