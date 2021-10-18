@@ -51,7 +51,7 @@ variable "require_tls" {
 
 variable "require_acl_bucket_owner_full_control" {
   type        = bool
-  description = "Require all objects to have the \"bucket-owner-full-control\" acl."
+  description = "Require the object ACL be set to \"bucket-owner-full-control\" on all PutObject API requests."
   default     = false
 }
 

@@ -99,7 +99,7 @@ No modules.
 | <a name="input_logging_prefix"></a> [logging\_prefix](#input\_logging\_prefix) | The key prefix to use when logging.  Defaults to "s3/[NAME]/" if not specified. | `string` | `""` | no |
 | <a name="input_name"></a> [name](#input\_name) | The name of the AWS S3 bucket. | `string` | n/a | yes |
 | <a name="input_notifications"></a> [notifications](#input\_notifications) | List of notifications to configure. | <pre>list(object({<br>    id            = string<br>    queue_arn     = string<br>    events        = list(string)<br>    filter_prefix = string<br>    filter_suffix = string<br>  }))</pre> | `[]` | no |
-| <a name="input_require_acl_bucket_owner_full_control"></a> [require\_acl\_bucket\_owner\_full\_control](#input\_require\_acl\_bucket\_owner\_full\_control) | Require all objects to have the "bucket-owner-full-control" acl. | `bool` | `false` | no |
+| <a name="input_require_acl_bucket_owner_full_control"></a> [require\_acl\_bucket\_owner\_full\_control](#input\_require\_acl\_bucket\_owner\_full\_control) | Require the object ACL be set to "bucket-owner-full-control" on all PutObject API requests. | `bool` | `false` | no |
 | <a name="input_require_tls"></a> [require\_tls](#input\_require\_tls) | Require all API requests to use TLS connections. | `bool` | `false` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags applied to the AWS S3 bucket. | `map(string)` | `{}` | no |
 
