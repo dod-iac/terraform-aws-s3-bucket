@@ -1,7 +1,7 @@
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Usage
 
-This example is used by the `TestTerraformPolicyExample` test in `test/terrafrom_aws_simple_test.go`.
+This example is used by the `TestTerraformPolicyExample` test in `test/terrafrom_aws_policy_test.go`.
 
 ## Terraform Version
 
