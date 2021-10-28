@@ -20,3 +20,11 @@ output "arn" {
 output "id" {
   value = module.s3_bucket.id
 }
+
+output "endpoint_transfer_acceleration" {
+  value = module.s3_bucket.endpoint_transfer_acceleration
+}
+
+output "endpoint_transfer_acceleration_dual_stack" {
+  value = module.s3_bucket.endpoint_transfer_acceleration_dual_stack
+}

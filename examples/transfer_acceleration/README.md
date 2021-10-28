@@ -44,6 +44,8 @@ No resources.
 | Name | Description |
 |------|-------------|
 | <a name="output_arn"></a> [arn](#output\_arn) | n/a |
+| <a name="output_endpoint_transfer_acceleration"></a> [endpoint\_transfer\_acceleration](#output\_endpoint\_transfer\_acceleration) | n/a |
+| <a name="output_endpoint_transfer_acceleration_dual_stack"></a> [endpoint\_transfer\_acceleration\_dual\_stack](#output\_endpoint\_transfer\_acceleration\_dual\_stack) | n/a |
 | <a name="output_id"></a> [id](#output\_id) | n/a |
 | <a name="output_tags"></a> [tags](#output\_tags) | n/a |
 | <a name="output_test_name"></a> [test\_name](#output\_test\_name) | n/a |
