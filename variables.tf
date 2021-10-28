@@ -49,15 +49,15 @@ variable "notifications" {
   default     = []
 }
 
-variable "require_tls" {
-  type        = bool
-  description = "Require all API requests to use TLS connections."
-  default     = false
-}
-
 variable "require_acl_bucket_owner_full_control" {
   type        = bool
   description = "Require the object ACL be set to \"bucket-owner-full-control\" on all PutObject API requests."
+  default     = false
+}
+
+variable "require_tls" {
+  type        = bool
+  description = "Require all API requests to use TLS connections."
   default     = false
 }
 

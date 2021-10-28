@@ -119,6 +119,7 @@ data "aws_iam_policy_document" "policy" {
   dynamic "statement" {
     for_each = var.require_acl_bucket_owner_full_control ? [1] : []
     content {
+      sid = "RequireACLBucketOwnerFullControl"
       actions = [
         "s3:PutObject",
       ]
