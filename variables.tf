@@ -4,12 +4,6 @@ variable "bucket_key_enabled" {
   default     = false
 }
 
-variable "transfer_acceleration_enabled" {
-  type        = bool
-  description = "If true, then AWS S3 Transfer Acceleration is enabled for the bucket."
-  default     = false
-}
-
 variable "grants" {
   type = list(object({
     id          = string
@@ -18,11 +12,6 @@ variable "grants" {
   }))
   default     = []
   description = "List of ACL policy grants."
-}
-
-variable "name" {
-  type        = string
-  description = "The name of the AWS S3 bucket."
 }
 
 variable "logging_bucket" {
@@ -41,6 +30,11 @@ variable "kms_master_key_id" {
   type        = string
   description = "The default KMS used for server-side encryption."
   default     = ""
+}
+
+variable "name" {
+  type        = string
+  description = "The name of the AWS S3 bucket."
 }
 
 variable "notifications" {
@@ -71,6 +65,12 @@ variable "tags" {
   type        = map(string)
   description = "Tags applied to the AWS S3 bucket."
   default     = {}
+}
+
+variable "transfer_acceleration_enabled" {
+  type        = bool
+  description = "If true, then AWS S3 Transfer Acceleration is enabled for the bucket."
+  default     = false
 }
 
 variable "versioning_enabled" {
