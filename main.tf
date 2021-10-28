@@ -67,10 +67,13 @@ data "aws_partition" "current" {}
 data "aws_region" "current" {}
 
 resource "aws_s3_bucket" "main" {
+  acceleration_status = var.transfer_acceleration_enabled ? "Enabled" : null
+  bucket              = var.name
+  tags                = var.tags
 
-  bucket = var.name
-
-  tags = var.tags
+  versioning {
+    enabled = true
+  }
 
   dynamic "grant" {
     for_each = var.grants
@@ -93,16 +96,13 @@ resource "aws_s3_bucket" "main" {
     for_each = length(var.kms_master_key_id) > 0 ? [1] : []
     content {
       rule {
+        bucket_key_enabled = var.bucket_key_enabled
         apply_server_side_encryption_by_default {
           kms_master_key_id = var.kms_master_key_id
           sse_algorithm     = "aws:kms"
         }
       }
     }
-  }
-
-  versioning {
-    enabled = true
   }
 
 }

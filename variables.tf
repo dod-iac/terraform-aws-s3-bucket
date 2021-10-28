@@ -1,3 +1,15 @@
+variable "bucket_key_enabled" {
+  type        = bool
+  description = "If true and the \"kms_master_key_id\" is provided, then the bucket is configured to use Amazon S3 Bucket Keys."
+  default     = false
+}
+
+variable "transfer_acceleration_enabled" {
+  type        = bool
+  description = "If true, then AWS S3 Transfer Acceleration is enabled for the bucket."
+  default     = false
+}
+
 variable "grants" {
   type = list(object({
     id          = string

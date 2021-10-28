@@ -93,6 +93,7 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_bucket_key_enabled"></a> [bucket\_key\_enabled](#input\_bucket\_key\_enabled) | If true and the "kms\_master\_key\_id" is provided, then the bucket is configured to use Amazon S3 Bucket Keys. | `bool` | `false` | no |
 | <a name="input_grants"></a> [grants](#input\_grants) | List of ACL policy grants. | <pre>list(object({<br>    id          = string<br>    permissions = list(string)<br>    type        = string<br>  }))</pre> | `[]` | no |
 | <a name="input_kms_master_key_id"></a> [kms\_master\_key\_id](#input\_kms\_master\_key\_id) | The default KMS used for server-side encryption. | `string` | `""` | no |
 | <a name="input_logging_bucket"></a> [logging\_bucket](#input\_logging\_bucket) | The name of the bucket that will receive the log objects. | `string` | `""` | no |
@@ -102,6 +103,7 @@ No modules.
 | <a name="input_require_acl_bucket_owner_full_control"></a> [require\_acl\_bucket\_owner\_full\_control](#input\_require\_acl\_bucket\_owner\_full\_control) | Require the object ACL be set to "bucket-owner-full-control" on all PutObject API requests. | `bool` | `false` | no |
 | <a name="input_require_tls"></a> [require\_tls](#input\_require\_tls) | Require all API requests to use TLS connections. | `bool` | `false` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags applied to the AWS S3 bucket. | `map(string)` | `{}` | no |
+| <a name="input_transfer_acceleration_enabled"></a> [transfer\_acceleration\_enabled](#input\_transfer\_acceleration\_enabled) | If true, then AWS S3 Transfer Acceleration is enabled for the bucket. | `bool` | `false` | no |
 
 ## Outputs
 
@@ -109,5 +111,7 @@ No modules.
 |------|-------------|
 | <a name="output_arn"></a> [arn](#output\_arn) | The Amazon Resource Name (ARN) of the AWS S3 Bucket. |
 | <a name="output_bucket_regional_domain_name"></a> [bucket\_regional\_domain\_name](#output\_bucket\_regional\_domain\_name) | The regional domain name of the AWS S3 Bucket. |
+| <a name="output_endpoint_transfer_acceleration"></a> [endpoint\_transfer\_acceleration](#output\_endpoint\_transfer\_acceleration) | If AWS S3 Transfer Acceleration is enabled, then the endpoint to use over IPv4. |
+| <a name="output_endpoint_transfer_acceleration_dual_stack"></a> [endpoint\_transfer\_acceleration\_dual\_stack](#output\_endpoint\_transfer\_acceleration\_dual\_stack) | If AWS S3 Transfer Acceleration is enabled, then the dual-stack endpoint to use over IPv4 or IPv6. |
 | <a name="output_id"></a> [id](#output\_id) | The ID of the AWS S3 Bucket. |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
