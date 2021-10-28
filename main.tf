@@ -72,7 +72,7 @@ resource "aws_s3_bucket" "main" {
   tags                = var.tags
 
   versioning {
-    enabled = true
+    enabled = var.versioning_enabled
   }
 
   dynamic "grant" {

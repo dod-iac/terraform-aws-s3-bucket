@@ -72,3 +72,9 @@ variable "tags" {
   description = "Tags applied to the AWS S3 bucket."
   default     = {}
 }
+
+variable "versioning_enabled" {
+  type        = bool
+  description = "Enable versioning. Once you version-enable a bucket, it can never return to an unversioned state. You can, however, suspend versioning on that bucket."
+  default     = true
+}

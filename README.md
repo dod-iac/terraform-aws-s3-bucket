@@ -104,6 +104,7 @@ No modules.
 | <a name="input_require_tls"></a> [require\_tls](#input\_require\_tls) | Require all API requests to use TLS connections. | `bool` | `false` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags applied to the AWS S3 bucket. | `map(string)` | `{}` | no |
 | <a name="input_transfer_acceleration_enabled"></a> [transfer\_acceleration\_enabled](#input\_transfer\_acceleration\_enabled) | If true, then AWS S3 Transfer Acceleration is enabled for the bucket. | `bool` | `false` | no |
+| <a name="input_versioning_enabled"></a> [versioning\_enabled](#input\_versioning\_enabled) | Enable versioning. Once you version-enable a bucket, it can never return to an unversioned state. You can, however, suspend versioning on that bucket. | `bool` | `true` | no |
 
 ## Outputs
 
