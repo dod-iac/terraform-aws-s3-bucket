@@ -67,10 +67,13 @@ data "aws_partition" "current" {}
 data "aws_region" "current" {}
 
 resource "aws_s3_bucket" "main" {
+  acceleration_status = var.transfer_acceleration_enabled ? "Enabled" : null
+  bucket              = var.name
+  tags                = var.tags
 
-  bucket = var.name
-
-  tags = var.tags
+  versioning {
+    enabled = var.versioning_enabled
+  }
 
   dynamic "grant" {
     for_each = var.grants
@@ -93,16 +96,13 @@ resource "aws_s3_bucket" "main" {
     for_each = length(var.kms_master_key_id) > 0 ? [1] : []
     content {
       rule {
+        bucket_key_enabled = var.bucket_key_enabled
         apply_server_side_encryption_by_default {
           kms_master_key_id = var.kms_master_key_id
           sse_algorithm     = "aws:kms"
         }
       }
     }
-  }
-
-  versioning {
-    enabled = true
   }
 
 }
@@ -113,6 +113,61 @@ resource "aws_s3_bucket_public_access_block" "main" {
   ignore_public_acls      = true
   block_public_policy     = true
   restrict_public_buckets = true
+}
+
+data "aws_iam_policy_document" "policy" {
+  dynamic "statement" {
+    for_each = var.require_acl_bucket_owner_full_control ? [1] : []
+    content {
+      sid = "RequireACLBucketOwnerFullControl"
+      actions = [
+        "s3:PutObject",
+      ]
+      effect = "Deny"
+      principals {
+        type        = "AWS"
+        identifiers = ["*"]
+      }
+      resources = [
+        format("%s/*", aws_s3_bucket.main.arn)
+      ]
+      condition {
+        test     = "StringNotEquals"
+        variable = "s3:x-amz-acl"
+        values   = ["bucket-owner-full-control"]
+      }
+    }
+  }
+  dynamic "statement" {
+    for_each = var.require_tls ? [1] : []
+    content {
+      sid    = "RequireTLS"
+      effect = "Deny"
+      principals {
+        type        = "AWS"
+        identifiers = ["*"]
+      }
+      actions = ["s3:*"]
+      resources = [
+        aws_s3_bucket.main.arn,
+        format("%s/*", aws_s3_bucket.main.arn)
+      ]
+      condition {
+        test     = "Bool"
+        variable = "aws:SecureTransport"
+        values   = ["false"]
+      }
+    }
+  }
+}
+
+resource "aws_s3_bucket_policy" "main" {
+  depends_on = [
+    aws_s3_bucket_public_access_block.main
+  ]
+  count  = (var.require_tls || var.require_acl_bucket_owner_full_control) ? 1 : 0
+  bucket = aws_s3_bucket.main.id
+  policy = data.aws_iam_policy_document.policy.json
 }
 
 resource "aws_s3_bucket_notification" "main" {

@@ -1,3 +1,9 @@
+variable "bucket_key_enabled" {
+  type        = bool
+  description = "If true and the \"kms_master_key_id\" is provided, then the bucket is configured to use Amazon S3 Bucket Keys."
+  default     = false
+}
+
 variable "grants" {
   type = list(object({
     id          = string
@@ -6,11 +12,6 @@ variable "grants" {
   }))
   default     = []
   description = "List of ACL policy grants."
-}
-
-variable "name" {
-  type        = string
-  description = "The name of the AWS S3 bucket."
 }
 
 variable "logging_bucket" {
@@ -31,6 +32,11 @@ variable "kms_master_key_id" {
   default     = ""
 }
 
+variable "name" {
+  type        = string
+  description = "The name of the AWS S3 bucket."
+}
+
 variable "notifications" {
   type = list(object({
     id            = string
@@ -43,8 +49,32 @@ variable "notifications" {
   default     = []
 }
 
+variable "require_acl_bucket_owner_full_control" {
+  type        = bool
+  description = "Require the object ACL be set to \"bucket-owner-full-control\" on all PutObject API requests."
+  default     = false
+}
+
+variable "require_tls" {
+  type        = bool
+  description = "Require all API requests to use TLS connections."
+  default     = false
+}
+
 variable "tags" {
   type        = map(string)
   description = "Tags applied to the AWS S3 bucket."
   default     = {}
+}
+
+variable "transfer_acceleration_enabled" {
+  type        = bool
+  description = "If true, then AWS S3 Transfer Acceleration is enabled for the bucket."
+  default     = false
+}
+
+variable "versioning_enabled" {
+  type        = bool
+  description = "Enable versioning. Once you version-enable a bucket, it can never return to an unversioned state. You can, however, suspend versioning on that bucket."
+  default     = true
 }
