@@ -33,7 +33,7 @@ imports: bin/goimports ## Update imports in Go source code
 	bin/goimports -w -local github.com/dod-iac $$(find . -iname '*.go')
 
 .PHONY: lint_go
-lint_go: bin/errcheck bin/ineffassign bin/staticcheck bin/shadow ## Run Go tests
+lint_go: bin/errcheck bin/misspell bin/staticcheck bin/shadow ## Run Go tests
 	bash scripts/lint-go 2>&1
 
 vet: ## Vet Go source code
