@@ -176,16 +176,19 @@ resource "aws_s3_bucket_notification" "main" {
     aws_s3_bucket_public_access_block.main
   ]
 
-  count = length(var.notifications)
+  count = length(var.notifications) > 0 ? 1 : 0
 
   bucket = aws_s3_bucket.main.id
 
-  queue {
-    id            = var.notifications[count.index].id
-    queue_arn     = var.notifications[count.index].queue_arn
-    events        = var.notifications[count.index].events
-    filter_prefix = length(var.notifications[count.index].filter_prefix) > 0 ? var.notifications[count.index].filter_prefix : null
-    filter_suffix = length(var.notifications[count.index].filter_suffix) > 0 ? var.notifications[count.index].filter_suffix : null
+  dynamic "queue" {
+    for_each = var.notifications
+    content {
+      id            = queue.value.id
+      queue_arn     = queue.value.queue_arn
+      events        = queue.value.events
+      filter_prefix = length(queue.value.filter_prefix) > 0 ? queue.value.filter_prefix : null
+      filter_suffix = length(queue.value.filter_suffix) > 0 ? queue.value.filter_suffix : null
+    }
   }
 
 }

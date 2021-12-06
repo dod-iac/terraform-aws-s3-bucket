@@ -60,8 +60,8 @@ bin/errcheck: ## Make go binary errcheck
 bin/goimports: ## Make go binary goimports
 	go build -o bin/goimports golang.org/x/tools/cmd/goimports
 
-bin/ineffassign: ## Make go binary ineffassign
-	go build -o bin/ineffassign github.com/gordonklaus/ineffassign
+bin/misspell:
+	go build -o bin/misspell github.com/client9/misspell/cmd/misspell
 
 bin/staticcheck: ## Make go binary staticcheck
 	go build -o bin/staticcheck honnef.co/go/tools/cmd/staticcheck
