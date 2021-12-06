@@ -33,7 +33,7 @@ imports: bin/goimports ## Update imports in Go source code
 	bin/goimports -w -local github.com/dod-iac $$(find . -iname '*.go')
 
 .PHONY: lint_go
-lint_go: bin/errcheck bin/ineffassign bin/staticcheck bin/shadow ## Run Go tests
+lint_go: bin/errcheck bin/misspell bin/staticcheck bin/shadow ## Run Go tests
 	bash scripts/lint-go 2>&1
 
 vet: ## Vet Go source code
@@ -60,8 +60,8 @@ bin/errcheck: ## Make go binary errcheck
 bin/goimports: ## Make go binary goimports
 	go build -o bin/goimports golang.org/x/tools/cmd/goimports
 
-bin/ineffassign: ## Make go binary ineffassign
-	go build -o bin/ineffassign github.com/gordonklaus/ineffassign
+bin/misspell:
+	go build -o bin/misspell github.com/client9/misspell/cmd/misspell
 
 bin/staticcheck: ## Make go binary staticcheck
 	go build -o bin/staticcheck honnef.co/go/tools/cmd/staticcheck
