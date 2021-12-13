@@ -111,7 +111,7 @@ resource "aws_s3_bucket" "main" {
       id      = lifecycle_rule.value.id == null ? null : length(lifecycle_rule.value.id) > 0 ? lifecycle_rule.value.id : null
       enabled = lifecycle_rule.value.enabled
       prefix  = lifecycle_rule.value.prefix == null ? null : length(lifecycle_rule.value.prefix) > 0 ? lifecycle_rule.value.prefix : null
-      tags  = lifecycle_rule.value.tags == null ? null : length(lifecycle_rule.value.tags) > 0 ? lifecycle_rule.value.tags : null
+      tags    = lifecycle_rule.value.tags == null ? null : length(lifecycle_rule.value.tags) > 0 ? lifecycle_rule.value.tags : null
       dynamic "transition" {
         for_each = lifecycle_rule.value.transitions
         content {

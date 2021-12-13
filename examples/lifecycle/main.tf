@@ -17,14 +17,14 @@ module "s3_bucket" {
 
   lifecycle_rules = [
     {
-      id = null
+      id      = null
       enabled = true
-      prefix = null
-      tags = {}
+      prefix  = null
+      tags    = {}
       transitions = [
         {
-          date = null
-          days = 1
+          date          = null
+          days          = 1
           storage_class = "DEEP_ARCHIVE"
         }
       ]
