@@ -14,6 +14,22 @@ variable "grants" {
   description = "List of ACL policy grants."
 }
 
+variable "lifecycle_rules" {
+  type = list(object({
+    id      = string
+    enabled = bool
+    prefix  = string
+    tags    = map(string)
+    transitions = list(object({
+      date          = string
+      days          = number
+      storage_class = string
+    }))
+  }))
+  description = "A list of lifecycle rules."
+  default     = []
+}
+
 variable "logging_bucket" {
   type        = string
   description = "The name of the bucket that will receive the log objects."

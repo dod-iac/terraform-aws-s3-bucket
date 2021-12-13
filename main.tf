@@ -105,6 +105,24 @@ resource "aws_s3_bucket" "main" {
     }
   }
 
+  dynamic "lifecycle_rule" {
+    for_each = var.lifecycle_rules
+    content {
+      id      = lifecycle_rule.value.id == null ? null : length(lifecycle_rule.value.id) > 0 ? lifecycle_rule.value.id : null
+      enabled = lifecycle_rule.value.enabled
+      prefix  = lifecycle_rule.value.prefix == null ? null : length(lifecycle_rule.value.prefix) > 0 ? lifecycle_rule.value.prefix : null
+      tags  = lifecycle_rule.value.tags == null ? null : length(lifecycle_rule.value.tags) > 0 ? lifecycle_rule.value.tags : null
+      dynamic "transition" {
+        for_each = lifecycle_rule.value.transitions
+        content {
+          date          = transition.value.date == null ? null : length(transition.value.date) > 0 ? transition.value.date : null
+          days          = transition.value.days == null ? null : transition.value.days > 0 ? transition.value.days : null
+          storage_class = transition.value.storage_class
+        }
+      }
+    }
+  }
+
 }
 
 resource "aws_s3_bucket_public_access_block" "main" {
