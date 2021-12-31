@@ -96,6 +96,7 @@ No modules.
 | <a name="input_bucket_key_enabled"></a> [bucket\_key\_enabled](#input\_bucket\_key\_enabled) | If true and the "kms\_master\_key\_id" is provided, then the bucket is configured to use Amazon S3 Bucket Keys. | `bool` | `false` | no |
 | <a name="input_grants"></a> [grants](#input\_grants) | List of ACL policy grants. | <pre>list(object({<br>    id          = string<br>    permissions = list(string)<br>    type        = string<br>  }))</pre> | `[]` | no |
 | <a name="input_kms_master_key_id"></a> [kms\_master\_key\_id](#input\_kms\_master\_key\_id) | The default KMS used for server-side encryption. | `string` | `""` | no |
+| <a name="input_lifecycle_rules"></a> [lifecycle\_rules](#input\_lifecycle\_rules) | A list of lifecycle rules. | <pre>list(object({<br>    id      = string<br>    enabled = bool<br>    prefix  = string<br>    tags    = map(string)<br>    transitions = list(object({<br>      date          = string<br>      days          = number<br>      storage_class = string<br>    }))<br>  }))</pre> | `[]` | no |
 | <a name="input_logging_bucket"></a> [logging\_bucket](#input\_logging\_bucket) | The name of the bucket that will receive the log objects. | `string` | `""` | no |
 | <a name="input_logging_prefix"></a> [logging\_prefix](#input\_logging\_prefix) | The key prefix to use when logging.  Defaults to "s3/[NAME]/" if not specified. | `string` | `""` | no |
 | <a name="input_name"></a> [name](#input\_name) | The name of the AWS S3 bucket. | `string` | n/a | yes |
