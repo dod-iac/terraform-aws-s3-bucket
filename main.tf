@@ -78,9 +78,10 @@ resource "aws_s3_bucket" "main" {
   dynamic "grant" {
     for_each = var.grants
     content {
-      id          = grant.value.id
+      id          = length(grant.value.id) > 0 ? grant.value.id : null
       permissions = grant.value.permissions
       type        = grant.value.type
+      uri         = length(grant.value.uri) > 0 ? grant.value.uri : null
     }
   }
 

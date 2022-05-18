@@ -22,3 +22,8 @@ output "endpoint_transfer_acceleration_dual_stack" {
   description = "If AWS S3 Transfer Acceleration is enabled, then the dual-stack endpoint to use over IPv4 or IPv6."
   value       = var.transfer_acceleration_enabled ? format("%s.s3-accelerate.dualstack.amazonaws.com", aws_s3_bucket.main.id) : null
 }
+
+output "region" {
+  description = "The AWS region this bucket resides in."
+  value       = aws_s3_bucket.main.region
+}

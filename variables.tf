@@ -9,9 +9,10 @@ variable "grants" {
     id          = string
     permissions = list(string)
     type        = string
+    uri         = string
   }))
   default     = []
-  description = "List of ACL policy grants."
+  description = "List of ACL policy grants. If id or uri are not used, then set as a blank string."
 }
 
 variable "lifecycle_rules" {
