@@ -94,7 +94,7 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_bucket_key_enabled"></a> [bucket\_key\_enabled](#input\_bucket\_key\_enabled) | If true and the "kms\_master\_key\_id" is provided, then the bucket is configured to use Amazon S3 Bucket Keys. | `bool` | `false` | no |
-| <a name="input_grants"></a> [grants](#input\_grants) | List of ACL policy grants. | <pre>list(object({<br>    id          = string<br>    permissions = list(string)<br>    type        = string<br>  }))</pre> | `[]` | no |
+| <a name="input_grants"></a> [grants](#input\_grants) | List of ACL policy grants. If id or uri are not used, then set as a blank string. | <pre>list(object({<br>    id          = string<br>    permissions = list(string)<br>    type        = string<br>    uri         = string<br>  }))</pre> | `[]` | no |
 | <a name="input_kms_master_key_id"></a> [kms\_master\_key\_id](#input\_kms\_master\_key\_id) | The default KMS used for server-side encryption. | `string` | `""` | no |
 | <a name="input_lifecycle_rules"></a> [lifecycle\_rules](#input\_lifecycle\_rules) | A list of lifecycle rules. | <pre>list(object({<br>    id      = string<br>    enabled = bool<br>    prefix  = string<br>    tags    = map(string)<br>    transitions = list(object({<br>      date          = string<br>      days          = number<br>      storage_class = string<br>    }))<br>  }))</pre> | `[]` | no |
 | <a name="input_logging_bucket"></a> [logging\_bucket](#input\_logging\_bucket) | The name of the bucket that will receive the log objects. | `string` | `""` | no |
@@ -116,4 +116,5 @@ No modules.
 | <a name="output_endpoint_transfer_acceleration"></a> [endpoint\_transfer\_acceleration](#output\_endpoint\_transfer\_acceleration) | If AWS S3 Transfer Acceleration is enabled, then the endpoint to use over IPv4. |
 | <a name="output_endpoint_transfer_acceleration_dual_stack"></a> [endpoint\_transfer\_acceleration\_dual\_stack](#output\_endpoint\_transfer\_acceleration\_dual\_stack) | If AWS S3 Transfer Acceleration is enabled, then the dual-stack endpoint to use over IPv4 or IPv6. |
 | <a name="output_id"></a> [id](#output\_id) | The ID of the AWS S3 Bucket. |
+| <a name="output_region"></a> [region](#output\_region) | The AWS region this bucket resides in. |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
