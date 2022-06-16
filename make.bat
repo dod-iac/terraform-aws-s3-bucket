@@ -66,31 +66,12 @@ if %1%==update_docs (
     exit /B 1
   )
 
-
-  terraform-docs markdown . > README.md
-  echo|set /p="<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->"> TMP_README.md
-  echo. >> TMP_README.md
-  type README.md >> TMP_README.md
-  echo|set /p="<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->">> TMP_README.md
-  echo. >> TMP_README.md
-  del README.md
-  ren TMP_README.md README.md
-  echo|set /p="BUG: README.md now includes windows new lines.  Please convert file to linux new lines using your editor and remove trailing whitespace from header."
-  echo.
+  powershell "%~dp0scripts\update-readme-windows.ps1"
 
   for /R "%~dp0examples" %%e in (.) do (
     if exist %%e\main.tf (
       pushd %%e
-      terraform-docs markdown . > README.md
-      echo|set /p="<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->" > TMP_README.md
-      echo. >> TMP_README.md
-      type README.md >> TMP_README.md
-      echo|set /p="<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->" >> TMP_README.md
-      echo. >> TMP_README.md
-      del README.md
-      ren TMP_README.md README.md
-      echo|set /p="BUG: %%e\README.md now includes windows new lines.  Please convert file to linux new lines using your editor and remove trailing whitespace from header."
-      echo.
+      powershell "%~dp0scripts\update-readme-windows.ps1"
       popd
     )
   )
