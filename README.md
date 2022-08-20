@@ -55,6 +55,12 @@ Terraform 0.13. Pin module version to ~> 1.0.0 . Submit pull-requests to main br
 
 Terraform 0.11 and 0.12 are not supported.
 
+## Upgrade Notes
+
+### 1.1.x to 1.2.x
+
+In version 1.2.x, the resources internal to this module were refactored to support the AWS provider with versions `>= 4.9, < 5.0`. You'll need to import existing resources during the upgrade process. See https://registry.terraform.io/providers/hashicorp/aws/latest/docs/guides/version-4-upgrade#s3-bucket-refactor for more information.
+
 ## License
 
 This project constitutes a work of the United States Government and is not subject to domestic copyright protection under 17 USC § 105.  However, because the project utilizes code licensed from contributors and other third parties, it therefore is licensed under the MIT License.  See LICENSE file for more information.
