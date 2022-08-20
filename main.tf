@@ -62,50 +62,44 @@
 
 data "aws_caller_identity" "current" {}
 
+data "aws_canonical_user_id" "current" {}
+
 data "aws_partition" "current" {}
 
 data "aws_region" "current" {}
 
 resource "aws_s3_bucket" "main" {
-  acceleration_status = var.transfer_acceleration_enabled ? "Enabled" : null
-  bucket              = var.name
-  tags                = var.tags
+  bucket = var.name
+  tags   = var.tags
+}
 
-  versioning {
-    enabled = var.versioning_enabled
-  }
+resource "aws_s3_bucket_accelerate_configuration" "main" {
+  bucket              = aws_s3_bucket.main.id
+  acceleration_status = var.transfer_acceleration_enabled ? "Enabled" : "Suspended"
+}
 
-  dynamic "grant" {
-    for_each = var.grants
-    content {
-      id          = length(grant.value.id) > 0 ? grant.value.id : null
-      permissions = grant.value.permissions
-      type        = grant.value.type
-      uri         = length(grant.value.uri) > 0 ? grant.value.uri : null
-    }
-  }
-
-  dynamic "logging" {
-    for_each = length(var.logging_bucket) > 0 ? [1] : []
-    content {
-      target_bucket = var.logging_bucket
-      target_prefix = length(var.logging_prefix) > 0 ? var.logging_prefix : format("s3/%s/", var.name)
-    }
-  }
-
-  dynamic "server_side_encryption_configuration" {
-    for_each = length(var.kms_master_key_id) > 0 ? [1] : []
-    content {
-      rule {
-        bucket_key_enabled = var.bucket_key_enabled
-        apply_server_side_encryption_by_default {
-          kms_master_key_id = var.kms_master_key_id
-          sse_algorithm     = "aws:kms"
-        }
+resource "aws_s3_bucket_acl" "main" {
+  count  = length(var.grants) > 0 ? 1 : 0
+  bucket = aws_s3_bucket.main.id
+  access_control_policy {
+    dynamic "grant" {
+      for_each = var.grants
+      content {
+        id          = length(grant.value.id) > 0 ? grant.value.id : null
+        permissions = grant.value.permissions
+        type        = grant.value.type
+        uri         = length(grant.value.uri) > 0 ? grant.value.uri : null
       }
     }
+    owner {
+      id = data.aws_canonical_user_id.current.id
+    }
   }
+}
 
+resource "aws_s3_bucket_lifecycle_configuration" "main" {
+  count  = length(var.lifecycle_rules) > 0 ? 1 : 0
+  bucket = aws_s3_bucket.main.id
   dynamic "lifecycle_rule" {
     for_each = var.lifecycle_rules
     content {
@@ -123,7 +117,13 @@ resource "aws_s3_bucket" "main" {
       }
     }
   }
+}
 
+resource "aws_s3_bucket_logging" "main" {
+  count         = length(var.logging_bucket) > 0 ? 1 : 0
+  bucket        = aws_s3_bucket.main.id
+  target_bucket = var.logging_bucket
+  target_prefix = length(var.logging_prefix) > 0 ? var.logging_prefix : format("s3/%s/", var.name)
 }
 
 resource "aws_s3_bucket_public_access_block" "main" {
@@ -132,6 +132,25 @@ resource "aws_s3_bucket_public_access_block" "main" {
   ignore_public_acls      = true
   block_public_policy     = true
   restrict_public_buckets = true
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "main" {
+  count  = length(var.kms_master_key_id) > 0 ? 1 : 0
+  bucket = aws_s3_bucket.main.id
+  rule {
+    bucket_key_enabled = var.bucket_key_enabled
+    apply_server_side_encryption_by_default {
+      kms_master_key_id = var.kms_master_key_id
+      sse_algorithm     = "aws:kms"
+    }
+  }
+}
+
+resource "aws_s3_bucket_versioning" "main" {
+  bucket = aws_s3_bucket.main.id
+  versioning_configuration {
+    status = var.versioning_enabled ? "Enabled" : "Disabled"
+  }
 }
 
 data "aws_iam_policy_document" "policy" {
