@@ -89,12 +89,19 @@ resource "aws_s3_bucket_acl" "main" {
   bucket = aws_s3_bucket.main.id
   access_control_policy {
     dynamic "grant" {
-      for_each = var.grants
+      for_each = flatten([for grant in var.grants : [for permission in grant.permissions : {
+        permission = permission
+        id         = lookup(grant, "id", null)
+        type       = lookup(grant, "type", null)
+        uri        = lookup(grant, "uri", null)
+      }]])
       content {
-        id          = length(grant.value.id) > 0 ? grant.value.id : null
-        permissions = grant.value.permissions
-        type        = grant.value.type
-        uri         = length(grant.value.uri) > 0 ? grant.value.uri : null
+        permission = grant.value.permission
+        grantee {
+          id   = length(grant.value.id) > 0 ? grant.value.id : null
+          type = grant.value.type
+          uri  = length(grant.value.uri) > 0 ? grant.value.uri : null
+        }
       }
     }
     owner {
@@ -104,15 +111,18 @@ resource "aws_s3_bucket_acl" "main" {
 }
 
 resource "aws_s3_bucket_lifecycle_configuration" "main" {
-  count  = length(var.lifecycle_rules) > 0 ? 1 : 0
+  count = length(var.lifecycle_rules) > 0 ? 1 : 0
+
   bucket = aws_s3_bucket.main.id
-  dynamic "lifecycle_rule" {
+  dynamic "rule" {
     for_each = var.lifecycle_rules
     content {
-      id      = lifecycle_rule.value.id == null ? null : length(lifecycle_rule.value.id) > 0 ? lifecycle_rule.value.id : null
-      enabled = lifecycle_rule.value.enabled
-      prefix  = lifecycle_rule.value.prefix == null ? null : length(lifecycle_rule.value.prefix) > 0 ? lifecycle_rule.value.prefix : null
-      tags    = lifecycle_rule.value.tags == null ? null : length(lifecycle_rule.value.tags) > 0 ? lifecycle_rule.value.tags : null
+      id     = lifecycle_rule.value.id == null ? null : length(lifecycle_rule.value.id) > 0 ? lifecycle_rule.value.id : null
+      status = lifecycle_rule.value.enabled ? "Enabled" : "Disabled"
+      tags   = lifecycle_rule.value.tags == null ? null : length(lifecycle_rule.value.tags) > 0 ? lifecycle_rule.value.tags : null
+      filter {
+        prefix = lifecycle_rule.value.prefix == null ? null : length(lifecycle_rule.value.prefix) > 0 ? lifecycle_rule.value.prefix : null
+      }
       dynamic "transition" {
         for_each = lifecycle_rule.value.transitions
         content {
