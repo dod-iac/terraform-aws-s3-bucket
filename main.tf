@@ -80,8 +80,8 @@ resource "aws_s3_bucket" "main" {
 }
 
 resource "aws_s3_bucket_accelerate_configuration" "main" {
-  bucket              = aws_s3_bucket.main.id
-  acceleration_status = var.transfer_acceleration_enabled ? "Enabled" : "Suspended"
+  bucket = aws_s3_bucket.main.id
+  status = var.transfer_acceleration_enabled ? "Enabled" : "Suspended"
 }
 
 resource "aws_s3_bucket_acl" "main" {
@@ -117,14 +117,14 @@ resource "aws_s3_bucket_lifecycle_configuration" "main" {
   dynamic "rule" {
     for_each = var.lifecycle_rules
     content {
-      id     = lifecycle_rule.value.id == null ? null : length(lifecycle_rule.value.id) > 0 ? lifecycle_rule.value.id : null
-      status = lifecycle_rule.value.enabled ? "Enabled" : "Disabled"
-      tags   = lifecycle_rule.value.tags == null ? null : length(lifecycle_rule.value.tags) > 0 ? lifecycle_rule.value.tags : null
+      id     = rule.value.id == null ? null : length(rule.value.id) > 0 ? rule.value.id : null
+      status = rule.value.enabled ? "Enabled" : "Disabled"
+      tags   = rule.value.tags == null ? null : length(rule.value.tags) > 0 ? rule.value.tags : null
       filter {
-        prefix = lifecycle_rule.value.prefix == null ? null : length(lifecycle_rule.value.prefix) > 0 ? lifecycle_rule.value.prefix : null
+        prefix = rule.value.prefix == null ? null : length(rule.value.prefix) > 0 ? rule.value.prefix : null
       }
       dynamic "transition" {
-        for_each = lifecycle_rule.value.transitions
+        for_each = rule.value.transitions
         content {
           date          = transition.value.date == null ? null : length(transition.value.date) > 0 ? transition.value.date : null
           days          = transition.value.days == null ? null : transition.value.days > 0 ? transition.value.days : null
