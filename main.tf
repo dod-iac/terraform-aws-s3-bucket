@@ -119,9 +119,14 @@ resource "aws_s3_bucket_lifecycle_configuration" "main" {
     content {
       id     = rule.value.id == null ? null : length(rule.value.id) > 0 ? rule.value.id : null
       status = rule.value.enabled ? "Enabled" : "Disabled"
-      tags   = rule.value.tags == null ? null : length(rule.value.tags) > 0 ? rule.value.tags : null
-      filter {
-        prefix = rule.value.prefix == null ? null : length(rule.value.prefix) > 0 ? rule.value.prefix : null
+      dynamic "filter" {
+        for_each = (rule.value.prefix != null && length(rule.value.prefix) > 0) || (rule.value.tags != null && length(rule.value.tags) > 0) ? [1] : []
+        content {
+          and {
+            prefix = rule.value.prefix == null ? null : length(rule.value.prefix) > 0 ? rule.value.prefix : null
+            tags   = rule.value.tags == null ? null : length(rule.value.tags) > 0 ? rule.value.tags : null
+          }
+        }
       }
       dynamic "transition" {
         for_each = rule.value.transitions
