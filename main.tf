@@ -79,7 +79,11 @@ resource "aws_s3_bucket" "main" {
   tags   = var.tags
 }
 
+# Amazon S3 Transfer Acceleration is only available in AWS Commercial
+# https://docs.aws.amazon.com/govcloud-us/latest/UserGuide/govcloud-s3.html
 resource "aws_s3_bucket_accelerate_configuration" "main" {
+  count = data.aws_partition.current == "aws" ? 1 : 0
+
   bucket = aws_s3_bucket.main.id
   status = var.transfer_acceleration_enabled ? "Enabled" : "Suspended"
 }
