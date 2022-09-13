@@ -55,6 +55,12 @@
  *
  * Terraform 0.11 and 0.12 are not supported.
  *
+ * ## Upgrade Notes
+ *
+ * ### 1.1.x to 1.2.x
+ *
+ * In version 1.2.x, the resources internal to this module were refactored to support the AWS provider with versions `>= 4.9, < 5.0`. You'll need to import existing resources during the upgrade process. See https://registry.terraform.io/providers/hashicorp/aws/latest/docs/guides/version-4-upgrade#s3-bucket-refactor for more information.
+ *
  * ## License
  *
  * This project constitutes a work of the United States Government and is not subject to domestic copyright protection under 17 USC § 105.  However, because the project utilizes code licensed from contributors and other third parties, it therefore is licensed under the MIT License.  See LICENSE file for more information.
@@ -62,59 +68,72 @@
 
 data "aws_caller_identity" "current" {}
 
+data "aws_canonical_user_id" "current" {}
+
 data "aws_partition" "current" {}
 
 data "aws_region" "current" {}
 
 resource "aws_s3_bucket" "main" {
-  acceleration_status = var.transfer_acceleration_enabled ? "Enabled" : null
-  bucket              = var.name
-  tags                = var.tags
+  bucket = var.name
+  tags   = var.tags
+}
 
-  versioning {
-    enabled = var.versioning_enabled
-  }
+# Amazon S3 Transfer Acceleration is only available in AWS Commercial
+# https://docs.aws.amazon.com/govcloud-us/latest/UserGuide/govcloud-s3.html
+resource "aws_s3_bucket_accelerate_configuration" "main" {
+  count = data.aws_partition.current == "aws" ? 1 : 0
 
-  dynamic "grant" {
-    for_each = var.grants
-    content {
-      id          = length(grant.value.id) > 0 ? grant.value.id : null
-      permissions = grant.value.permissions
-      type        = grant.value.type
-      uri         = length(grant.value.uri) > 0 ? grant.value.uri : null
-    }
-  }
+  bucket = aws_s3_bucket.main.id
+  status = var.transfer_acceleration_enabled ? "Enabled" : "Suspended"
+}
 
-  dynamic "logging" {
-    for_each = length(var.logging_bucket) > 0 ? [1] : []
-    content {
-      target_bucket = var.logging_bucket
-      target_prefix = length(var.logging_prefix) > 0 ? var.logging_prefix : format("s3/%s/", var.name)
-    }
-  }
-
-  dynamic "server_side_encryption_configuration" {
-    for_each = length(var.kms_master_key_id) > 0 ? [1] : []
-    content {
-      rule {
-        bucket_key_enabled = var.bucket_key_enabled
-        apply_server_side_encryption_by_default {
-          kms_master_key_id = var.kms_master_key_id
-          sse_algorithm     = "aws:kms"
+resource "aws_s3_bucket_acl" "main" {
+  count  = length(var.grants) > 0 ? 1 : 0
+  bucket = aws_s3_bucket.main.id
+  access_control_policy {
+    dynamic "grant" {
+      for_each = flatten([for grant in var.grants : [for permission in grant.permissions : {
+        permission = permission
+        id         = lookup(grant, "id", null)
+        type       = lookup(grant, "type", null)
+        uri        = lookup(grant, "uri", null)
+      }]])
+      content {
+        permission = grant.value.permission
+        grantee {
+          id   = length(grant.value.id) > 0 ? grant.value.id : null
+          type = grant.value.type
+          uri  = length(grant.value.uri) > 0 ? grant.value.uri : null
         }
       }
     }
+    owner {
+      id = data.aws_canonical_user_id.current.id
+    }
   }
+}
 
-  dynamic "lifecycle_rule" {
+resource "aws_s3_bucket_lifecycle_configuration" "main" {
+  count = length(var.lifecycle_rules) > 0 ? 1 : 0
+
+  bucket = aws_s3_bucket.main.id
+  dynamic "rule" {
     for_each = var.lifecycle_rules
     content {
-      id      = lifecycle_rule.value.id == null ? null : length(lifecycle_rule.value.id) > 0 ? lifecycle_rule.value.id : null
-      enabled = lifecycle_rule.value.enabled
-      prefix  = lifecycle_rule.value.prefix == null ? null : length(lifecycle_rule.value.prefix) > 0 ? lifecycle_rule.value.prefix : null
-      tags    = lifecycle_rule.value.tags == null ? null : length(lifecycle_rule.value.tags) > 0 ? lifecycle_rule.value.tags : null
+      id     = rule.value.id == null ? null : length(rule.value.id) > 0 ? rule.value.id : null
+      status = rule.value.enabled ? "Enabled" : "Disabled"
+      dynamic "filter" {
+        for_each = (rule.value.prefix != null && length(rule.value.prefix) > 0) || (rule.value.tags != null && length(rule.value.tags) > 0) ? [1] : []
+        content {
+          and {
+            prefix = rule.value.prefix == null ? null : length(rule.value.prefix) > 0 ? rule.value.prefix : null
+            tags   = rule.value.tags == null ? null : length(rule.value.tags) > 0 ? rule.value.tags : null
+          }
+        }
+      }
       dynamic "transition" {
-        for_each = lifecycle_rule.value.transitions
+        for_each = rule.value.transitions
         content {
           date          = transition.value.date == null ? null : length(transition.value.date) > 0 ? transition.value.date : null
           days          = transition.value.days == null ? null : transition.value.days > 0 ? transition.value.days : null
@@ -123,7 +142,13 @@ resource "aws_s3_bucket" "main" {
       }
     }
   }
+}
 
+resource "aws_s3_bucket_logging" "main" {
+  count         = length(var.logging_bucket) > 0 ? 1 : 0
+  bucket        = aws_s3_bucket.main.id
+  target_bucket = var.logging_bucket
+  target_prefix = length(var.logging_prefix) > 0 ? var.logging_prefix : format("s3/%s/", var.name)
 }
 
 resource "aws_s3_bucket_public_access_block" "main" {
@@ -132,6 +157,25 @@ resource "aws_s3_bucket_public_access_block" "main" {
   ignore_public_acls      = true
   block_public_policy     = true
   restrict_public_buckets = true
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "main" {
+  count  = length(var.kms_master_key_id) > 0 ? 1 : 0
+  bucket = aws_s3_bucket.main.id
+  rule {
+    bucket_key_enabled = var.bucket_key_enabled
+    apply_server_side_encryption_by_default {
+      kms_master_key_id = var.kms_master_key_id
+      sse_algorithm     = "aws:kms"
+    }
+  }
+}
+
+resource "aws_s3_bucket_versioning" "main" {
+  bucket = aws_s3_bucket.main.id
+  versioning_configuration {
+    status = var.versioning_enabled ? "Enabled" : "Disabled"
+  }
 }
 
 data "aws_iam_policy_document" "policy" {
