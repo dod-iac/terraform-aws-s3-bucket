@@ -28,7 +28,7 @@ variable "lifecycle_rules" {
 variable "logging" {
   type = object({
     bucket = string
-    prefix = optional(string)
+    prefix = optional(string,"")
   })
   description = "The `bucket` is the bucket that will receive the log objects.  The `prefix` is the key prefix to use when logging, and defaults to \"s3/[NAME]/\" when not specified."
   default     = null

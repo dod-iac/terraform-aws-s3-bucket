@@ -13,9 +13,10 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/stretchr/testify/require"
+
 	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/gruntwork-io/terratest/modules/terraform"
-	"github.com/stretchr/testify/require"
 )
 
 func TestTerraformLifecycleExample(t *testing.T) {

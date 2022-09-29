@@ -51,15 +51,15 @@ Run all terratest tests using the `terratest` script.  If using `aws-vault`, you
 
 ## Terraform Version
 
-Terraform 1.3.0. Pin module version to ~> 1.0.0 . Submit pull-requests to main branch.
+Terraform 1.3.0. Pin module version to ~> 2.0.0 . Submit pull-requests to main branch.
 
 Terraform 0.11 and 0.12 are not supported.
 
 ## Upgrade Notes
 
-### 1.2.x to 1.3.x
+### 1.2.x to 2.x.x
 
-In version 1.3.x, the variables to this module were updated to support the new optional variable functionality introduced in terraform version `1.3.0`.  This update fixes the multi-step apply introduced by version `1.2.x` of this module that was required in order to support AWS provider `4.9`.  With internal use of objects and optional variables a multi-step apply is no longer needed.  To reduce required upgrade modifications, previous use of blank strings for null values is still supported.  The new `server_side_encryption` variable includes the previous `kms_master_key_id` and `bucket_key_enabled` variables as object attributes.  The new `logging` variable includes the `bucket` and `prefix` object attributes.
+In version 2.x.x, the variables to this module were updated to support the new optional variable functionality introduced in terraform version `1.3.0` and have some breaking changes.  The new `server_side_encryption` variable includes the previous `kms_master_key_id` and `bucket_key_enabled` variables as object attributes.  The new `logging` variable includes the `bucket` and `prefix` object attributes. This update fixes the multi-step apply introduced by version `1.2.x` of this module that was required in order to support AWS provider `4.9`.  With internal use of objects and optional variables a multi-step apply is no longer needed.  To reduce required upgrade modifications, previous use of blank strings for null values is still supported.  
 
 ### 1.1.x to 1.2.x
 
