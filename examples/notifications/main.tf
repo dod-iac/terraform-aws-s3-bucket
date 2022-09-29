@@ -68,11 +68,9 @@ module "s3_bucket" {
 
   name = var.test_name
   notifications = [{
-    id            = format("test-%s", var.test_name)
-    queue_arn     = module.sqs_queue.arn
-    events        = ["s3:ObjectCreated:*"]
-    filter_prefix = ""
-    filter_suffix = ""
+    id        = format("test-%s", var.test_name)
+    queue_arn = module.sqs_queue.arn
+    events    = ["s3:ObjectCreated:*"]
   }]
   tags = var.tags
 }

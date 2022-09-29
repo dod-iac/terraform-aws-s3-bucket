@@ -25,7 +25,10 @@ module "s3_kms_key" {
 module "s3_bucket" {
   source = "../../"
 
-  kms_master_key_id = module.s3_kms_key.aws_kms_key_arn
-  name              = var.test_name
-  tags              = var.tags
+  name = var.test_name
+  server_side_encryption = {
+    bucket_key_enabled = true
+    kms_master_key_id  = module.s3_kms_key.aws_kms_key_arn
+  }
+  tags = var.tags
 }
