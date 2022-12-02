@@ -95,10 +95,8 @@ if %1%==staticcheck (
 
 if %1%==terratest (
 
-  call "%~dp0env.bat"
-
   call "%~dp0terratest.bat"
-  
+
   exit /B 0
 )
 

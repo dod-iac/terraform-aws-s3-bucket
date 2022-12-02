@@ -21,6 +21,7 @@ where terraform >nul 2>&1 || (
 )
 
 echo|set /p="Verifying AWS credentials"
+echo.
 
 aws sts get-caller-identity >nul
 IF %ERRORLEVEL% NEQ 0 (
@@ -28,7 +29,8 @@ IF %ERRORLEVEL% NEQ 0 (
 )
 
 echo|set /p="Running tests"
+echo.
 
-go test -v -short -count 1 -timeout 15m -run TestTerraformSimpleExample .\test\...
+go test -short -count 1 -timeout 15m .\test\...
 
 :eof

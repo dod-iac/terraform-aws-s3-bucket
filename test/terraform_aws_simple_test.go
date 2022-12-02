@@ -10,6 +10,7 @@ package test
 import (
 	"fmt"
 	"os"
+	"runtime"
 	"strings"
 	"testing"
 
@@ -25,6 +26,11 @@ func TestTerraformSimpleExample(t *testing.T) {
 	t.Parallel()
 
 	region := os.Getenv("AWS_DEFAULT_REGION")
+
+	noColor := false
+	if runtime.GOOS == "windows" {
+		noColor = true
+	}
 
 	// If AWS_DEFAULT_REGION environment variable is not set, then fail the test.
 	require.NotEmpty(t, region, "missing environment variable AWS_DEFAULT_REGION")
@@ -54,6 +60,7 @@ func TestTerraformSimpleExample(t *testing.T) {
 		EnvVars: map[string]string{
 			"AWS_DEFAULT_REGION": region,
 		},
+		NoColor: noColor,
 	})
 
 	// If TT_SKIP_DESTROY is set to "1" then do not destroy the intrastructure,

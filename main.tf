@@ -253,8 +253,8 @@ resource "aws_s3_bucket_notification" "main" {
       id            = queue.value.id
       queue_arn     = queue.value.queue_arn
       events        = queue.value.events
-      filter_prefix = (queue.value.filter_prefix != null) && (length(queue.value.filter_prefix) > 0) ? rule.value.filter_prefix : null
-      filter_suffix = (queue.value.filter_suffix != null) && (length(queue.value.filter_suffix) > 0) ? rule.value.filter_suffix : null
+      filter_prefix = queue.value.filter_prefix == null ? null : length(queue.value.filter_prefix) == 0 ? null : queue.value.filter_prefix
+      filter_suffix = queue.value.filter_suffix == null ? null : length(queue.value.filter_suffix) == 0 ? null : queue.value.filter_suffix
     }
   }
 

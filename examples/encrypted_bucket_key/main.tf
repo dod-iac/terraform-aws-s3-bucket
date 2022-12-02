@@ -14,7 +14,7 @@
 
 module "s3_kms_key" {
   source  = "dod-iac/s3-kms-key/aws"
-  version = "1.0.1"
+  version = "1.0.4"
 
   name        = format("alias/test-%s", var.test_name)
   description = format("A KMS key used to encrypt objects at rest for %s", var.test_name)
