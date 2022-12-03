@@ -11,8 +11,8 @@ variable "grants" {
 
 variable "lifecycle_rules" {
   type = list(object({
-    id      = string
-    enabled = bool
+    id      = optional(string)
+    enabled = optional(bool, true)
     prefix  = optional(string)
     tags    = optional(map(string))
     transitions = list(object({

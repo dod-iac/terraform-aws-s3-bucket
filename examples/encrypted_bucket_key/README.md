@@ -15,8 +15,8 @@ This project constitutes a work of the United States Government and is not subje
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.13 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 3.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4.9, < 5.0 |
 
 ## Providers
 
@@ -27,7 +27,7 @@ No providers.
 | Name | Source | Version |
 |------|--------|---------|
 | <a name="module_s3_bucket"></a> [s3\_bucket](#module\_s3\_bucket) | ../../ | n/a |
-| <a name="module_s3_kms_key"></a> [s3\_kms\_key](#module\_s3\_kms\_key) | dod-iac/s3-kms-key/aws | 1.0.1 |
+| <a name="module_s3_kms_key"></a> [s3\_kms\_key](#module\_s3\_kms\_key) | dod-iac/s3-kms-key/aws | 1.0.4 |
 
 ## Resources
 

@@ -125,22 +125,25 @@ resource "aws_s3_bucket_lifecycle_configuration" "main" {
   dynamic "rule" {
     for_each = var.lifecycle_rules
     content {
-      id     = (rule.value.id != null) && (length(rule.value.id) > 0) ? rule.value.id : null
+      id     = rule.value.id == null ? format("lifecycle-rule-%d", rule.key) : length(rule.value.id) == 0 ? format("lifecycle-rule-%d", rule.key) : rule.value.id
       status = rule.value.enabled ? "Enabled" : "Disabled"
       dynamic "filter" {
-        for_each = (rule.value.prefix != null && length(rule.value.prefix) > 0) || (rule.value.tags != null && length(rule.value.tags) > 0) ? [1] : []
+        for_each = anytrue([
+          (rule.value.prefix == null ? false : length(rule.value.prefix) > 0),
+          (rule.value.tags == null ? false : length(rule.value.tags) > 0)
+        ]) ? [1] : []
         content {
           and {
-            prefix = (rule.value.prefix != null) && (length(rule.value.prefix) > 0) ? rule.value.prefix : null
-            tags   = (rule.value.tags != null) && (length(rule.value.tags) > 0) ? rule.value.tags : null
+            prefix = rule.value.prefix == null ? null : length(rule.value.prefix) == 0 ? null : rule.value.prefix
+            tags   = rule.value.tags == null ? null : length(rule.value.tags) == 0 ? null : rule.value.tags
           }
         }
       }
       dynamic "transition" {
         for_each = rule.value.transitions
         content {
-          date          = (transition.value.date != null) && (length(transition.value.date) > 0) ? transition.value.date : null
-          days          = (transition.value.date != null) && (transition.value.days > 0) ? transition.value.days : null
+          date          = transition.value.date == null ? null : length(transition.value.date) == 0 ? null : transition.value.date
+          days          = transition.value.date == null ? ((transition.value.days > 0) ? transition.value.days : null) : length(transition.value.date) == 0 ? ((transition.value.days > 0) ? transition.value.days : null) : null
           storage_class = transition.value.storage_class
         }
       }

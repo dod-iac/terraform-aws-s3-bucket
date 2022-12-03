@@ -74,9 +74,9 @@ module "s3_bucket" {
       events    = ["s3:ObjectCreated:*"]
     },
     {
-      id        = format("test-removed-suffix-%s", var.test_name)
-      queue_arn = module.sqs_queue.arn
-      events    = ["s3:ObjectRemoved:*"]
+      id            = format("test-removed-suffix-%s", var.test_name)
+      queue_arn     = module.sqs_queue.arn
+      events        = ["s3:ObjectRemoved:*"]
       filter_suffix = ".txt"
     }
   ]
