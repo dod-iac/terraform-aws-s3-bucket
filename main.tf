@@ -51,11 +51,15 @@
  *
  * ## Terraform Version
  *
- * Terraform 0.13. Pin module version to ~> 1.0.0 . Submit pull-requests to main branch.
+ * Terraform 1.3.0. Pin module version to ~> 2.0.0 . Submit pull-requests to main branch.
  *
  * Terraform 0.11 and 0.12 are not supported.
  *
  * ## Upgrade Notes
+ *
+ * ### 1.2.x to 2.x.x
+ *
+ * In version 2.x.x, the variables to this module were updated to support the new optional variable functionality introduced in terraform version `1.3.0` and have some breaking changes.  The new `server_side_encryption` variable includes the previous `kms_master_key_id` and `bucket_key_enabled` variables as object attributes.  The new `logging` variable includes the `bucket` and `prefix` object attributes. This update fixes the multi-step apply introduced by version `1.2.x` of this module that was required in order to support AWS provider `4.9`.  With internal use of objects and optional variables a multi-step apply is no longer needed.  To reduce required upgrade modifications, previous use of blank strings for null values is still supported.
  *
  * ### 1.1.x to 1.2.x
  *
@@ -121,22 +125,25 @@ resource "aws_s3_bucket_lifecycle_configuration" "main" {
   dynamic "rule" {
     for_each = var.lifecycle_rules
     content {
-      id     = rule.value.id == null ? null : length(rule.value.id) > 0 ? rule.value.id : null
+      id     = rule.value.id == null ? format("lifecycle-rule-%d", rule.key) : length(rule.value.id) == 0 ? format("lifecycle-rule-%d", rule.key) : rule.value.id
       status = rule.value.enabled ? "Enabled" : "Disabled"
       dynamic "filter" {
-        for_each = (rule.value.prefix != null && length(rule.value.prefix) > 0) || (rule.value.tags != null && length(rule.value.tags) > 0) ? [1] : []
+        for_each = anytrue([
+          (rule.value.prefix == null ? false : length(rule.value.prefix) > 0),
+          (rule.value.tags == null ? false : length(rule.value.tags) > 0)
+        ]) ? [1] : []
         content {
           and {
-            prefix = rule.value.prefix == null ? null : length(rule.value.prefix) > 0 ? rule.value.prefix : null
-            tags   = rule.value.tags == null ? null : length(rule.value.tags) > 0 ? rule.value.tags : null
+            prefix = rule.value.prefix == null ? null : length(rule.value.prefix) == 0 ? null : rule.value.prefix
+            tags   = rule.value.tags == null ? null : length(rule.value.tags) == 0 ? null : rule.value.tags
           }
         }
       }
       dynamic "transition" {
         for_each = rule.value.transitions
         content {
-          date          = transition.value.date == null ? null : length(transition.value.date) > 0 ? transition.value.date : null
-          days          = transition.value.days == null ? null : transition.value.days > 0 ? transition.value.days : null
+          date          = transition.value.date == null ? null : length(transition.value.date) == 0 ? null : transition.value.date
+          days          = transition.value.date == null ? ((transition.value.days > 0) ? transition.value.days : null) : length(transition.value.date) == 0 ? ((transition.value.days > 0) ? transition.value.days : null) : null
           storage_class = transition.value.storage_class
         }
       }
@@ -145,10 +152,10 @@ resource "aws_s3_bucket_lifecycle_configuration" "main" {
 }
 
 resource "aws_s3_bucket_logging" "main" {
-  count         = length(var.logging_bucket) > 0 ? 1 : 0
+  count         = var.logging != null ? 1 : 0
   bucket        = aws_s3_bucket.main.id
-  target_bucket = var.logging_bucket
-  target_prefix = length(var.logging_prefix) > 0 ? var.logging_prefix : format("s3/%s/", var.name)
+  target_bucket = var.logging.bucket
+  target_prefix = (var.logging.prefix != null) && (length(var.logging.prefix) > 0) ? var.logging.prefix : format("s3/%s/", var.name)
 }
 
 resource "aws_s3_bucket_public_access_block" "main" {
@@ -160,12 +167,12 @@ resource "aws_s3_bucket_public_access_block" "main" {
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "main" {
-  count  = length(var.kms_master_key_id) > 0 ? 1 : 0
+  count  = var.server_side_encryption != null ? 1 : 0
   bucket = aws_s3_bucket.main.id
   rule {
-    bucket_key_enabled = var.bucket_key_enabled
+    bucket_key_enabled = var.server_side_encryption.bucket_key_enabled
     apply_server_side_encryption_by_default {
-      kms_master_key_id = var.kms_master_key_id
+      kms_master_key_id = var.server_side_encryption.kms_master_key_id
       sse_algorithm     = "aws:kms"
     }
   }
@@ -249,8 +256,8 @@ resource "aws_s3_bucket_notification" "main" {
       id            = queue.value.id
       queue_arn     = queue.value.queue_arn
       events        = queue.value.events
-      filter_prefix = length(queue.value.filter_prefix) > 0 ? queue.value.filter_prefix : null
-      filter_suffix = length(queue.value.filter_suffix) > 0 ? queue.value.filter_suffix : null
+      filter_prefix = queue.value.filter_prefix == null ? null : length(queue.value.filter_prefix) == 0 ? null : queue.value.filter_prefix
+      filter_suffix = queue.value.filter_suffix == null ? null : length(queue.value.filter_suffix) == 0 ? null : queue.value.filter_suffix
     }
   }
 

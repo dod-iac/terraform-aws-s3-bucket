@@ -56,7 +56,7 @@ data "aws_iam_policy_document" "sqs_policy" {
 
 module "sqs_queue" {
   source  = "dod-iac/sqs-queue/aws"
-  version = "1.0.1"
+  version = "1.0.4"
 
   name   = format("test-%s", var.test_name)
   policy = data.aws_iam_policy_document.sqs_policy.json
@@ -67,12 +67,18 @@ module "s3_bucket" {
   source = "../../"
 
   name = var.test_name
-  notifications = [{
-    id            = format("test-%s", var.test_name)
-    queue_arn     = module.sqs_queue.arn
-    events        = ["s3:ObjectCreated:*"]
-    filter_prefix = ""
-    filter_suffix = ""
-  }]
+  notifications = [
+    {
+      id        = format("test-created-%s", var.test_name)
+      queue_arn = module.sqs_queue.arn
+      events    = ["s3:ObjectCreated:*"]
+    },
+    {
+      id            = format("test-removed-suffix-%s", var.test_name)
+      queue_arn     = module.sqs_queue.arn
+      events        = ["s3:ObjectRemoved:*"]
+      filter_suffix = ".txt"
+    }
+  ]
   tags = var.tags
 }

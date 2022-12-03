@@ -14,7 +14,7 @@
 
 module "s3_kms_key" {
   source  = "dod-iac/s3-kms-key/aws"
-  version = "1.0.1"
+  version = "1.0.4"
 
   name        = format("alias/test-%s", var.test_name)
   description = format("A KMS key used to encrypt objects at rest for %s", var.test_name)
@@ -25,8 +25,10 @@ module "s3_kms_key" {
 module "s3_bucket" {
   source = "../../"
 
-  bucket_key_enabled = true
-  kms_master_key_id  = module.s3_kms_key.aws_kms_key_arn
-  name               = var.test_name
-  tags               = var.tags
+  name = var.test_name
+  server_side_encryption = {
+    bucket_key_enabled = true
+    kms_master_key_id  = module.s3_kms_key.aws_kms_key_arn
+  }
+  tags = var.tags
 }

@@ -1,29 +1,23 @@
-variable "bucket_key_enabled" {
-  type        = bool
-  description = "If true and the \"kms_master_key_id\" is provided, then the bucket is configured to use Amazon S3 Bucket Keys."
-  default     = false
-}
-
 variable "grants" {
   type = list(object({
-    id          = string
+    id          = optional(string, "")
     permissions = list(string)
     type        = string
-    uri         = string
+    uri         = optional(string, "")
   }))
   default     = []
-  description = "List of ACL policy grants. If id or uri are not used, then set as a blank string."
+  description = "List of ACL policy grants."
 }
 
 variable "lifecycle_rules" {
   type = list(object({
-    id      = string
-    enabled = bool
-    prefix  = string
-    tags    = map(string)
+    id      = optional(string)
+    enabled = optional(bool, true)
+    prefix  = optional(string)
+    tags    = optional(map(string))
     transitions = list(object({
-      date          = string
-      days          = number
+      date          = optional(string)
+      days          = optional(number)
       storage_class = string
     }))
   }))
@@ -31,22 +25,22 @@ variable "lifecycle_rules" {
   default     = []
 }
 
-variable "logging_bucket" {
-  type        = string
-  description = "The name of the bucket that will receive the log objects."
-  default     = ""
+variable "logging" {
+  type = object({
+    bucket = string
+    prefix = optional(string, "")
+  })
+  description = "The `bucket` is the bucket that will receive the log objects.  The `prefix` is the key prefix to use when logging, and defaults to \"s3/[NAME]/\" when not specified."
+  default     = null
 }
 
-variable "logging_prefix" {
-  type        = string
-  description = "The key prefix to use when logging.  Defaults to \"s3/[NAME]/\" if not specified."
-  default     = ""
-}
-
-variable "kms_master_key_id" {
-  type        = string
-  description = "The default KMS used for server-side encryption."
-  default     = ""
+variable "server_side_encryption" {
+  type = object({
+    bucket_key_enabled = optional(bool, false)
+    kms_master_key_id  = string
+  })
+  description = "The kms_master_key_id is the default KMS used for server-side encryption.  If bucket_key_enabled is true, then the bucket is configured to use Amazon S3 Bucket Keys."
+  default     = null
 }
 
 variable "name" {
@@ -59,8 +53,8 @@ variable "notifications" {
     id            = string
     queue_arn     = string
     events        = list(string)
-    filter_prefix = string
-    filter_suffix = string
+    filter_prefix = optional(string)
+    filter_suffix = optional(string)
   }))
   description = "List of notifications to configure."
   default     = []
