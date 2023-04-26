@@ -60,6 +60,12 @@ variable "notifications" {
   default     = []
 }
 
+variable "object_ownership" {
+  type        = string
+  description = "The object ownership setting. One of the following values: \"BucketOwnerPreferred\", \"ObjectWriter\", or \"BucketOwnerEnforced\"."
+  default     = "ObjectWriter"
+}
+
 variable "require_acl_bucket_owner_full_control" {
   type        = bool
   description = "Require the object ACL be set to \"bucket-owner-full-control\" on all PutObject API requests."

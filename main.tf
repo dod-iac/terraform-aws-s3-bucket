@@ -92,7 +92,17 @@ resource "aws_s3_bucket_accelerate_configuration" "main" {
   status = var.transfer_acceleration_enabled ? "Enabled" : "Suspended"
 }
 
+resource "aws_s3_bucket_ownership_controls" "main" {
+  bucket = aws_s3_bucket.main.id
+  rule {
+    object_ownership = var.object_ownership
+  }
+}
+
 resource "aws_s3_bucket_acl" "main" {
+  depends_on = [
+    aws_s3_bucket_ownership_controls.main
+  ]
   count  = length(var.grants) > 0 ? 1 : 0
   bucket = aws_s3_bucket.main.id
   access_control_policy {
