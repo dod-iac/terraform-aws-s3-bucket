@@ -62,7 +62,7 @@ variable "notifications" {
 
 variable "object_ownership" {
   type        = string
-  description = "The object ownership setting. One of the following values: \"BucketOwnerPreferred\", \"ObjectWriter\", or \"BucketOwnerEnforced\"."
+  description = "The object ownership setting. One of the following values: \"BucketOwnerEnforced\", \"BucketOwnerPreferred\", or \"ObjectWriter\"."
   default     = "ObjectWriter"
 }
 
