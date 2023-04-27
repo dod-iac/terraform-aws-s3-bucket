@@ -4,6 +4,7 @@ bin
 # direnv
 .envrc.local
 env.local.bat
+env.local.ps1
 
 # terraform
 .terraform

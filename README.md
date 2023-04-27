@@ -96,6 +96,7 @@ No modules.
 | [aws_s3_bucket_lifecycle_configuration.main](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_lifecycle_configuration) | resource |
 | [aws_s3_bucket_logging.main](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_logging) | resource |
 | [aws_s3_bucket_notification.main](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_notification) | resource |
+| [aws_s3_bucket_ownership_controls.main](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_ownership_controls) | resource |
 | [aws_s3_bucket_policy.main](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_policy) | resource |
 | [aws_s3_bucket_public_access_block.main](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_public_access_block) | resource |
 | [aws_s3_bucket_server_side_encryption_configuration.main](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_server_side_encryption_configuration) | resource |
@@ -115,6 +116,7 @@ No modules.
 | <a name="input_logging"></a> [logging](#input\_logging) | The `bucket` is the bucket that will receive the log objects.  The `prefix` is the key prefix to use when logging, and defaults to "s3/[NAME]/" when not specified. | <pre>object({<br>    bucket = string<br>    prefix = optional(string, "")<br>  })</pre> | `null` | no |
 | <a name="input_name"></a> [name](#input\_name) | The name of the AWS S3 bucket. | `string` | n/a | yes |
 | <a name="input_notifications"></a> [notifications](#input\_notifications) | List of notifications to configure. | <pre>list(object({<br>    id            = string<br>    queue_arn     = string<br>    events        = list(string)<br>    filter_prefix = optional(string)<br>    filter_suffix = optional(string)<br>  }))</pre> | `[]` | no |
+| <a name="input_object_ownership"></a> [object\_ownership](#input\_object\_ownership) | The object ownership setting. One of the following values: "BucketOwnerEnforced", "BucketOwnerPreferred", or "ObjectWriter". | `string` | `"ObjectWriter"` | no |
 | <a name="input_require_acl_bucket_owner_full_control"></a> [require\_acl\_bucket\_owner\_full\_control](#input\_require\_acl\_bucket\_owner\_full\_control) | Require the object ACL be set to "bucket-owner-full-control" on all PutObject API requests. | `bool` | `false` | no |
 | <a name="input_require_tls"></a> [require\_tls](#input\_require\_tls) | Require all API requests to use TLS connections. | `bool` | `false` | no |
 | <a name="input_server_side_encryption"></a> [server\_side\_encryption](#input\_server\_side\_encryption) | The kms\_master\_key\_id is the default KMS used for server-side encryption.  If bucket\_key\_enabled is true, then the bucket is configured to use Amazon S3 Bucket Keys. | <pre>object({<br>    bucket_key_enabled = optional(bool, false)<br>    kms_master_key_id  = string<br>  })</pre> | `null` | no |

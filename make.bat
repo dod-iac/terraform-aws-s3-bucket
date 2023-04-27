@@ -46,15 +46,7 @@ if %1%==format_terraform (
     exit /B 1
   )
 
-  terraform fmt
-
-  for /R "%~dp0examples" %%e in (.) do (
-    if exist %%e\main.tf (
-      pushd %%e
-      terraform fmt
-      popd
-    )
-  )
+  powershell "%~dp0powershell\format-terraform.ps1"
 
   exit /B 0
 )
@@ -114,15 +106,7 @@ if %1%==update_docs (
     exit /B 1
   )
 
-  powershell "%~dp0scripts\update-readme-windows.ps1"
-
-  for /R "%~dp0examples" %%e in (.) do (
-    if exist %%e\main.tf (
-      pushd %%e
-      powershell "%~dp0scripts\update-readme-windows.ps1"
-      popd
-    )
-  )
+  powershell "%~dp0powershell\update-docs.ps1"
 
   exit /B 0
 )
